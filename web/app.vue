@@ -1,6 +1,6 @@
 <template>
   <div>
-    <!-- Remove this component to get started! -->
+    <h1>Krile is here to help!</h1>
     <NuxtWelcome />
   </div>
 </template>
