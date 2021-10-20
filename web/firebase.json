@@ -4,7 +4,7 @@
   },
   "hosting": [
     {
-      "site": "krile-bot",
+      "site": "krilebot",
       "public": ".output/public",
       "cleanUrls": true,
       "rewrites": [

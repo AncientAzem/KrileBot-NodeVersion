@@ -9,7 +9,7 @@
   "private": true,
   "scripts": {
     "dev": "node index.js",
-    "global-commands": "node generateCommands.js"
+    "global-commands": "node deploy-commands.js"
   },
   "dependencies": {
     "@discordjs/builders": "^0.7.0",
