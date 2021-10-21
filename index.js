@@ -92,5 +92,5 @@ s3.getObject({ Bucket: 'isle-of-val', Key: 'firebase-admin.json' }, async (err, 
     }
 
     // Start Bot
-    client.login(process.env.TOKEN)
+    await client.login(process.env.TOKEN)
 })

@@ -1,4 +1,5 @@
 const { SlashCommandBuilder } = require('@discordjs/builders')
+const { MessageButton, MessageActionRow } = require('discord.js')
 const axios = require('axios')
 
 module.exports = {
@@ -29,9 +30,15 @@ module.exports = {
                 .then((response) => {
                     const invite = response.data
                     if (invite.error || !invite.code) { return interaction.reply('Unable to start a **Youtube Together** activity in the specific channel at this time.') }
-                    return interaction.reply(`And done! **YouTube Together** has been started in [${channel.name}](https://discord.gg/${invite.code})`)
+                    const actions = new MessageActionRow()
+                        .addComponents(
+                            new MessageButton()
+                                .setLabel('Join the activity')
+                                .setStyle('LINK')
+                                .setURL(`https://discord.gg/${invite.code}`),
+                        )
+                    return interaction.reply({ content: `And done! **YouTube Together** has been started in <#${channel.id}>`, components: [actions] })
                 })
-                .catch(() => interaction.reply('Unable to start a **Youtube Together** activity in the specific channel at this time.'))
         } else {
             return interaction.reply('You did not specify a voice channel. Please try again.')
         }
