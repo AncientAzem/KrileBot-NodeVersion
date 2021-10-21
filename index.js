@@ -58,7 +58,7 @@ s3.getObject({ Bucket: 'isle-of-val', Key: 'firebase-admin.json' }, async (err, 
 
         config.get('status').then((result) => {
             const { status } = result.data()
-            client.user.setActivity(status.message, status.type)
+            client.user.setActivity(status.message, { type: status.type })
         })
 
         // Add Guild Command Permission
