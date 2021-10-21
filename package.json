@@ -1,6 +1,9 @@
 {
   "name": "krile-bot",
   "version": "0.0.1",
+  "engines": {
+    "node": ">=16"
+  },
   "description": "A discord bot for managing your server with FFXIV centric themes and commands",
   "main": "index.js",
   "repository": "git@github.com:Baldesion-Tooling/Krile-Bot.git",
@@ -17,6 +20,7 @@
     "axios": "^0.23.0",
     "discord-api-types": "^0.24.0",
     "discord.js": "^13.2.0",
+    "dotenv": "^10.0.0",
     "eslint-config-airbnb-base": "14.2.1"
   },
   "devDependencies": {
