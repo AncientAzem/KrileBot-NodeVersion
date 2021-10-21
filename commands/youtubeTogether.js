@@ -1,4 +1,3 @@
-/* eslint-disable consistent-return */
 const { SlashCommandBuilder } = require('@discordjs/builders')
 const axios = require('axios')
 const { token } = require('../config.json')
