@@ -1,10 +1,26 @@
 const fs = require('fs')
 const dotenv = require('dotenv')
-const { Client, Collection, Intents } = require('discord.js')
 
-const client = new Client({ intents: [Intents.FLAGS.GUILDS] })
+const aws = require('aws-sdk')
+const firebaseAdmin = require('firebase-admin')
+
+const { Client, Collection, Intents } = require('discord.js')
+const { Interactions, Messages } = require('./events')
 
 dotenv.config()
+
+// Discord Client Setup
+const client = new Client({
+    intents: [
+        Intents.FLAGS.GUILDS,
+        Intents.FLAGS.GUILD_MESSAGES,
+        Intents.FLAGS.GUILD_MESSAGE_REACTIONS,
+        Intents.FLAGS.GUILD_INVITES,
+        Intents.FLAGS.GUILD_BANS,
+    ],
+})
+
+// Setup Commands
 client.commands = new Collection()
 const commandFiles = fs.readdirSync('./commands').filter((file) => file.endsWith('.js'))
 
@@ -17,8 +33,10 @@ commandFiles.forEach((file) => {
 })
 
 client.once('ready', async () => {
+    // Set Status Message
     client.user.setActivity('Ejika\'s theories', { type: 'LISTENING' })
 
+    // Add Guild Command Permission
     const guild = client.guilds.cache.get(process.env.GUILD_ID)
     if (guild) {
         const guildCommands = await guild.commands.fetch()
@@ -32,23 +50,21 @@ client.once('ready', async () => {
             }
         })
     }
-
     console.log('Bot is ready and online!')
 })
 
-client.on('interactionCreate', async (interaction) => {
-    if (!interaction.isCommand()) return
-
-    const command = client.commands.get(interaction.commandName)
-
-    if (!command) return
-
-    try {
-        await command.execute(interaction)
-    } catch (error) {
-        console.error(error)
-        return interaction.reply({ content: 'There was an error while executing this command!', ephemeral: true })
-    }
+// Event Processing
+client.on(Interactions.incoming.name, async (interaction) => {
+    await Interactions.incoming.execute(client, interaction)
 })
 
+// Logging
+if (process.env.ENABLE_LOGGING) {
+    client.on(Messages.deletion.name, (message) => {
+        const logChannel = client.channels.cache.get(process.env.LOGGING_CHANNEL)
+        Messages.deletion.execute(message, logChannel)
+    })
+}
+
+// Start Bot
 client.login(process.env.TOKEN)

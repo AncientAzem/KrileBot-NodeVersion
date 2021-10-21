@@ -48,5 +48,10 @@ module.exports = {
         }
 
         interaction.reply({ content: `Successfully pruned \`${amount}\` messages.`, ephemeral: true })
+
+        const loggingChannel = await interaction.client.channels.cache.get(process.env.LOGGING_CHANNEL)
+        if (loggingChannel) {
+            loggingChannel.send()
+        }
     },
 }
