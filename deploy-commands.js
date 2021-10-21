@@ -1,7 +1,10 @@
+/* eslint-disable no-unexpected-multiline */
 const fs = require('fs')
+const dotenv = require('dotenv')
 const { REST } = require('@discordjs/rest')
 const { Routes } = require('discord-api-types/v9')
 
+dotenv.config()
 const token = process.env.TOKEN
 const clientId = process.env.CLIENT_ID
 const guildId = process.env.GUILD_ID
