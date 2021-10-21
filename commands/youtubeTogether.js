@@ -1,6 +1,5 @@
 const { SlashCommandBuilder } = require('@discordjs/builders')
 const axios = require('axios')
-const { token } = require('../config.json')
 
 module.exports = {
     data: new SlashCommandBuilder()
@@ -23,7 +22,7 @@ module.exports = {
                     validate: null,
                 }, {
                     headers: {
-                        Authorization: `Bot ${token}`,
+                        Authorization: `Bot ${process.env.TOKEN}`,
                         'Content-Type': 'application/json',
                     },
                 })
