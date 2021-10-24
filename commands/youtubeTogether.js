@@ -4,7 +4,7 @@ const axios = require('axios')
 
 module.exports = {
     data: new SlashCommandBuilder()
-        .setName('youtube-together')
+        .setName('youtube')
         .setDescription('Starts a youtube together activity in the specified voice channel')
         .addChannelOption((option) => option
             .setName('target')

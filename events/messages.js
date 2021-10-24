@@ -2,12 +2,11 @@ const { MessageEmbed } = require('discord.js')
 
 const deletion = {
     name: 'messageDelete',
-    execute(message, channel) {
+    async execute(message, channel) {
         console.log(message)
         const timestamp = new Date(message.createdTimestamp)
         const utcTime = Date.UTC(timestamp.getUTCFullYear(), timestamp.getUTCMonth(), timestamp.getUTCDate(),
             timestamp.getUTCHours(), timestamp.getUTCMinutes(), timestamp.getUTCSeconds())
-        console.log(timestamp)
 
         const logMessage = new MessageEmbed()
             .setColor('#c22f25')

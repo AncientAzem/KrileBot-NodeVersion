@@ -1,6 +1,7 @@
 /* eslint-disable no-unexpected-multiline */
 const fs = require('fs')
 const dotenv = require('dotenv')
+const firebaseAdmin = require('firebase-admin')
 const { REST } = require('@discordjs/rest')
 const { Routes } = require('discord-api-types/v9')
 
