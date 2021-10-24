@@ -16,19 +16,16 @@ function Setup() {
  * Returns the body of a file from the container
  * @param {string} fileName
  * @param {aws.S3} connection
- // * @return {aws.S3.GetObjectOutput}
+ * @return {aws.S3.Body}
  * @constructor
  */
 async function Get(fileName, connection = Setup()) {
-    let result
-    await connection.getObject({ Bucket: 'isle-of-val', Key: fileName }, async (error, data) => {
-        if (error) {
-            return
-        }
-        result = data
-    })
-
-    return result
+    try {
+        const file = await connection.getObject({ Bucket: 'isle-of-val', Key: fileName }).promise()
+        return file.Body
+    } catch (e) {
+        return null
+    }
 }
 
 module.exports = {

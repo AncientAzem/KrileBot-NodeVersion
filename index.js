@@ -1,35 +1,23 @@
 const fs = require('fs')
 const dotenv = require('dotenv')
-
-const aws = require('aws-sdk')
 const firebaseAdmin = require('firebase-admin')
 
 const { Client, Collection, Intents } = require('discord.js')
 const { Interactions, Messages } = require('./events')
+const { Commands, FileStorage } = require('./helpers')
 
 dotenv.config()
-
-// DigitalOcean Spaces Setup
-const spacesEndpoint = new aws.Endpoint('sfo3.digitaloceanspaces.com')
-const s3 = new aws.S3({
-    endpoint: spacesEndpoint,
-    accessKeyId: process.env.SPACES_KEY,
-    secretAccessKey: process.env.SPACES_SECRET,
-})
-
-s3.getObject({ Bucket: 'isle-of-val', Key: 'firebase-admin.json' }, async (err, object) => {
-    if (err) {
+async function startApp() {
+    const firebaseConfig = await FileStorage.Get('firebase-admin.json')
+    if (!firebaseConfig) {
         throw new Error('Unable to connect to bucket to obtain firebase admin sdk info')
     }
-    // Firebase Setup
-    await firebaseAdmin.initializeApp({
-        credential: firebaseAdmin.credential.cert(JSON.parse(object.Body)),
+
+    firebaseAdmin.initializeApp({
+        credential: firebaseAdmin.credential.cert(JSON.parse(firebaseConfig)),
         databaseURL: 'https://isle-of-val-default-rtdb.firebaseio.com',
     })
-
-    const db = await firebaseAdmin.firestore().collection('krilebot')
-
-    // Discord Client Setup
+    const db = firebaseAdmin.firestore().collection('krilebot')
     const client = new Client({
         intents: [
             Intents.FLAGS.GUILDS,
@@ -53,29 +41,13 @@ s3.getObject({ Bucket: 'isle-of-val', Key: 'firebase-admin.json' }, async (err, 
     })
 
     client.once('ready', async () => {
-        // Set Status Message
-        const config = db.doc('globals')
-
-        config.get('status').then((result) => {
-            const { status } = result.data()
-            client.user.setActivity(status.message, { type: status.type })
+        const config = await db.doc('config').get()
+        client.user.setActivity(config.get('statusMessage'), { type: config.get('statusType') })
+        config.get('approvedServers').forEach((guildId) => {
+            Commands.SetPermissions(client, commands, guildId)
         })
 
-        // Add Guild Command Permission
-        const guild = client.guilds.cache.get(process.env.GUILD_ID)
-        if (guild) {
-            const guildCommands = await guild.commands.fetch()
-            guildCommands.forEach((cmd) => {
-                const { permissions, data } = commands.find((x) => x.data.name === cmd.name)
-                if (permissions) {
-                    permissions.forEach((perm) => {
-                        console.log(`Adding Permissions for ${data.name} | Type: ${perm.type} | ID of Restriction: ${perm.id}`)
-                    })
-                    cmd.permissions.add({ permissions })
-                }
-            })
-        }
-        console.log('Bot is ready and online!')
+        console.log('KrileBot is now online')
     })
 
     // Event Processing
@@ -93,4 +65,7 @@ s3.getObject({ Bucket: 'isle-of-val', Key: 'firebase-admin.json' }, async (err, 
 
     // Start Bot
     await client.login(process.env.TOKEN)
-})
+}
+
+// noinspection JSIgnoredPromiseFromCall
+startApp()
