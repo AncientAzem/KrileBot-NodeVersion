@@ -12,7 +12,7 @@
   "private": true,
   "scripts": {
     "dev": "node index.js",
-    "global-commands": "node deploy-commands.js"
+    "deployCommands": "node deploy-commands.js server global"
   },
   "dependencies": {
     "@discordjs/builders": "^0.7.0",

@@ -20,7 +20,8 @@ function SetPermissions(client, commandFiles, guildId) {
  * Registers application commands in server(s)
  * @param {Array<number>} approvedServers
  */
-function RegisterWithDiscord(commands, approvedServers = [process.env.GUILD_ID]) {
+function RegisterGuildCommands(commands, approvedServers = [process.env.GUILD_ID]) {
+    console.log(commands)
     const discordApi = new REST({ version: '9' }).setToken(process.env.TOKEN)
     approvedServers.forEach((server) => {
         discordApi.put(Routes.applicationGuildCommands(process.env.CLIENT_ID, server), { body: commands })
@@ -28,8 +29,19 @@ function RegisterWithDiscord(commands, approvedServers = [process.env.GUILD_ID])
             .catch(console.error)
     })
 }
+/**
+ * Registers global application commands
+ */
+function RegisterApplicationCommands(commands) {
+    console.log(commands)
+    const discordApi = new REST({ version: '9' }).setToken(process.env.TOKEN)
+    discordApi.put(Routes.applicationCommand(process.env.CLIENT_ID), { body: commands })
+        .then(() => console.log('Successfully registered application level command'))
+        .catch(console.error)
+}
 
 module.exports = {
     SetPermissions,
-    RegisterWithDiscord,
+    RegisterGuildCommands,
+    RegisterApplicationCommands,
 }

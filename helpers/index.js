@@ -1,10 +1,11 @@
 /* eslint-disable global-require */
-const { SetPermissions, RegisterWithDiscord } = require('./commands')
+const { SetPermissions, RegisterGuildCommands, RegisterApplicationCommands } = require('./commands')
 const { Setup, Get } = require('./S3')
 
 const Commands = {
     SetPermissions,
-    RegisterWithDiscord,
+    RegisterGuildCommands,
+    RegisterApplicationCommands,
 }
 
 const FileStorage = {

@@ -1,6 +1,7 @@
 const { SlashCommandBuilder } = require('@discordjs/builders')
 
 module.exports = {
+    global: true,
     data: new SlashCommandBuilder()
         .setName('avatar')
         .setDescription('Get the avatar URL of the selected user, or your own avatar.')

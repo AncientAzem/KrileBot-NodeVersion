@@ -3,6 +3,7 @@ const { MessageButton, MessageActionRow } = require('discord.js')
 const axios = require('axios')
 
 module.exports = {
+    global: true,
     data: new SlashCommandBuilder()
         .setName('youtube')
         .setDescription('Starts a youtube together activity in the specified voice channel')

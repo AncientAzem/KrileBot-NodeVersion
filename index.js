@@ -46,7 +46,7 @@ async function startApp() {
     client.once('ready', async () => {
         client.user.setActivity(botConfig.get('statusMessage'), { type: botConfig.get('statusType') })
         approvedServers.forEach((guildId) => {
-            Commands.SetPermissions(client, commands, guildId)
+            Commands.SetPermissions(client, commands.filter((c) => !c.global), guildId)
         })
 
         console.log('KrileBot is now online')

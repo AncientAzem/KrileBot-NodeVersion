@@ -1,6 +1,7 @@
 const { SlashCommandBuilder } = require('@discordjs/builders')
 
 module.exports = {
+    global: false,
     data: new SlashCommandBuilder()
         .setName('prune')
         .setDescription('Remove recent messages from a channel (max of 99)')
