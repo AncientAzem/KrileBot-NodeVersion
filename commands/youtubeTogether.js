@@ -10,7 +10,8 @@ module.exports = {
         .addChannelOption((option) => option
             .setName('target')
             .setDescription('The voice channel to start an activity in')
-            .setRequired(true)),
+            .setRequired(true))
+        .setDefaultPermission(true),
     async execute(interaction) {
         const channel = interaction.options.getChannel('target')
         if (channel && !channel.isText()) {

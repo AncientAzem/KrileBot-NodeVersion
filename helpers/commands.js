@@ -33,9 +33,8 @@ function RegisterGuildCommands(commands, approvedServers = [process.env.GUILD_ID
  * Registers global application commands
  */
 function RegisterApplicationCommands(commands) {
-    console.log(commands)
     const discordApi = new REST({ version: '9' }).setToken(process.env.TOKEN)
-    discordApi.put(Routes.applicationCommand(process.env.CLIENT_ID), { body: commands })
+    discordApi.put(Routes.applicationCommands(process.env.CLIENT_ID), { body: commands })
         .then(() => console.log('Successfully registered application level command'))
         .catch(console.error)
 }
