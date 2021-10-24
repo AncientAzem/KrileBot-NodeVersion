@@ -18,6 +18,8 @@ async function startApp() {
         databaseURL: 'https://isle-of-val-default-rtdb.firebaseio.com',
     })
     const db = firebaseAdmin.firestore().collection('krilebot')
+    const botConfig = await db.doc('config').get()
+
     const client = new Client({
         intents: [
             Intents.FLAGS.GUILDS,
@@ -31,6 +33,7 @@ async function startApp() {
     // Setup Commands
     client.commands = new Collection()
     const commandFiles = fs.readdirSync('./commands').filter((file) => file.endsWith('.js'))
+    const approvedServers = botConfig.get('approvedServers')
 
     const commands = []
     commandFiles.forEach((file) => {
@@ -41,9 +44,8 @@ async function startApp() {
     })
 
     client.once('ready', async () => {
-        const config = await db.doc('config').get()
-        client.user.setActivity(config.get('statusMessage'), { type: config.get('statusType') })
-        config.get('approvedServers').forEach((guildId) => {
+        client.user.setActivity(botConfig.get('statusMessage'), { type: botConfig.get('statusType') })
+        approvedServers.forEach((guildId) => {
             Commands.SetPermissions(client, commands, guildId)
         })
 
