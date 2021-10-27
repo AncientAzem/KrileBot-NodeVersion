@@ -1,5 +1,7 @@
 /* eslint-disable global-require */
-const { SetPermissions, RegisterGuildCommands, RegisterApplicationCommands } = require('./commands')
+const {
+    SetPermissions, RegisterGuildCommands, RegisterApplicationCommands, GetRegisteredCommands,
+} = require('./commands')
 const { Setup, Get } = require('./S3')
 const { StartActivity } = require('./general')
 
@@ -15,6 +17,7 @@ const Commands = {
     SetPermissions,
     RegisterGuildCommands,
     RegisterApplicationCommands,
+    GetRegisteredCommands,
 }
 
 const FileStorage = {

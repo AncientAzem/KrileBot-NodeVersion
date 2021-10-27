@@ -45,10 +45,32 @@ async function startApp() {
 
     client.once('ready', async () => {
         client.user.setActivity(botConfig.get('statusMessage'), { type: botConfig.get('statusType') })
-        approvedServers.forEach((guildId) => {
-            Commands.SetPermissions(client, commands.filter((c) => !c.global), guildId)
+
+        const applicationCommands = await Commands.GetRegisteredCommands()
+        applicationCommands.forEach((cmd) => {
+            if (commands.filter((commandFile) => commandFile.data.name == cmd.name).length === 0) {
+                client.application.commands.delete(cmd.id)
+                    .then(() => console.log(`Application Command /${cmd.name} (${cmd.id}) has been deleted`))
+                    .catch((error) => console.log(`Unable to Delete Application Command /${cmd.name} (${cmd.id})`, error))
+            }
         })
 
+        await Promise.all(approvedServers.map(async (guildId) => {
+            try {
+                const guildCommands = await Commands.GetRegisteredCommands(guildId)
+                guildCommands.forEach((cmd) => {
+                    if (commands.filter((commandFile) => commandFile.data.name == cmd.name).length === 0) {
+                        client.guilds.cache.get(guildId).commands.delete(cmd.id)
+                            .then(() => console.log(`Application Command /${cmd.name} (${cmd.id}) has been deleted in server (${guildId})`))
+                            .catch((error) => console.log(`Unable to Delete Application Command /${cmd.name} (${cmd.id}) in Guild ${guildId}`, error))
+                    }
+                })
+
+                await Commands.SetPermissions(client, commands.filter((c) => !c.global), guildId)
+            } catch (e) {
+                console.log(`Unable to manage commands for server ${guildId}`)
+            }
+        }))
         console.log('KrileBot is now online')
     })
 

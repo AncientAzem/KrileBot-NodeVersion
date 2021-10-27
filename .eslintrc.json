@@ -9,6 +9,7 @@
     "consistent-return": [1],
     "no-console": "off",
     "max-len": "off",
-    "eqeqeq": "warn"
+    "eqeqeq": "warn",
+    "no-await-in-loop": "warn"
   }
 }

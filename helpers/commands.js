@@ -1,5 +1,6 @@
 const { REST } = require('@discordjs/rest')
 const { Routes } = require('discord-api-types/v9')
+const { ApplicationCommand } = require('discord.js')
 const firebaseAdmin = require('firebase-admin')
 
 async function SetPermissions(client, commandFiles, guildId) {
@@ -33,6 +34,20 @@ async function SetPermissions(client, commandFiles, guildId) {
 }
 
 /**
+ *  * Gets an array of applications commands that are currently registered globally or for a guild
+ * @param guild ID of the guild you want the commands in
+ * @return {Promise<[ApplicationCommand]>}
+ * @constructor
+ */
+function GetRegisteredCommands(guild = undefined) {
+    const discordApi = new REST({ version: '9' }).setToken(process.env.TOKEN)
+    if (guild) {
+        return discordApi.get(Routes.applicationGuildCommands(process.env.CLIENT_ID, guild))
+    }
+    return discordApi.get(Routes.applicationCommands(process.env.CLIENT_ID))
+}
+
+/**
  * Registers application commands in server(s)
  * @param {Array<number>} approvedServers
  */
@@ -51,7 +66,7 @@ function RegisterGuildCommands(commands, approvedServers = [process.env.GUILD_ID
 function RegisterApplicationCommands(commands) {
     const discordApi = new REST({ version: '9' }).setToken(process.env.TOKEN)
     discordApi.put(Routes.applicationCommands(process.env.CLIENT_ID), { body: commands })
-        .then(() => console.log('Successfully registered application level command'))
+        .then(() => console.log('Successfully registered application level commands'))
         .catch(console.error)
 }
 
@@ -59,4 +74,5 @@ module.exports = {
     SetPermissions,
     RegisterGuildCommands,
     RegisterApplicationCommands,
+    GetRegisteredCommands,
 }
