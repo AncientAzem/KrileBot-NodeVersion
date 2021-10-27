@@ -12,7 +12,7 @@ module.exports = {
             .setDescription('The voice channel to start an activity in')
             .setRequired(true))
         .setDefaultPermission(true),
-    async execute(interaction) {
+    async execute(client, interaction) {
         const channel = interaction.options.getChannel('target')
         if (channel && !channel.isText()) {
             axios.post(`https://discord.com/api/v8/channels/${channel.id}/invites`,

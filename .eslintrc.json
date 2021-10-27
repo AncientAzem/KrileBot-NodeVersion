@@ -8,6 +8,7 @@
     "semi": [2, "never"],
     "consistent-return": [1],
     "no-console": "off",
-    "max-len": "off"
+    "max-len": "off",
+    "eqeqeq": "warn"
   }
 }

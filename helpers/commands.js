@@ -1,18 +1,34 @@
 const { REST } = require('@discordjs/rest')
 const { Routes } = require('discord-api-types/v9')
+const firebaseAdmin = require('firebase-admin')
 
-function SetPermissions(client, commandFiles, guildId) {
-    console.log(`Setting command permissions for guild "${guildId}".....`)
-    const guild = client.guilds.cache.get(guildId)
+async function SetPermissions(client, commandFiles, guildId) {
+    const guild = client.guilds.cache.find((g) => g.id == guildId)
     if (guild) {
-        guild.commands.fetch().then((result) => {
-            result.forEach((cmd) => {
-                const { permissions, data } = commandFiles.find((x) => x.data.name === cmd.name)
-                if (permissions) {
-                    cmd.permissions.add({ permissions }).then(() => console.log(`Permissions added for "/${data.name}" in guild "${guildId}"`))
-                }
+        console.log(`Setting command permissions for guild "${guildId}".....`)
+        const db = firebaseAdmin.firestore().collection('krilebot')
+        const serverConfig = await db.doc(`/config/servers/${guild.id}`).get()
+        if (serverConfig.data() && serverConfig.data().moderatorCommandRoles) {
+            const roles = serverConfig.data().moderatorCommandRoles
+            guild.commands.fetch().then((result) => {
+                result.forEach((cmd) => {
+                    const { isModeration, data } = commandFiles.find((x) => x.data.name === cmd.name)
+                    if (isModeration) {
+                        const perms = []
+                        roles.forEach((roleId) => {
+                            perms.push({
+                                id: roleId,
+                                type: 'ROLE',
+                                permission: true,
+                            })
+                        })
+                        cmd.permissions.add({ permissions: perms }).then(() => console.log(`Permissions added for "/${data.name}" in guild "${guildId}"`))
+                    }
+                })
             })
-        })
+        } else {
+            console.log('WARNING: No moderation roles have been set for this sever. Some commands may not be available for use')
+        }
     }
 }
 

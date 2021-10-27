@@ -6,7 +6,7 @@ module.exports = {
         .setName('server')
         .setDescription('Display info about this server.')
         .setDefaultPermission(true),
-    async execute(interaction) {
+    async execute(client, interaction) {
         return interaction.reply(`Server name: ${interaction.guild.name}\nTotal members: ${interaction.guild.memberCount}`)
     },
 }

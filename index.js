@@ -58,12 +58,13 @@ async function startApp() {
     })
 
     // Logging
-    if (process.env.ENABLE_LOGGING) {
-        client.on(Messages.deletion.name, (message) => {
-            const logChannel = client.channels.cache.get(process.env.LOGGING_CHANNEL)
-            Messages.deletion.execute(message, logChannel)
-        })
-    }
+    client.on(Messages.deletion.name, async (message) => {
+        const serverConfig = await db.doc(`/config/servers/${message.guildId}`).get()
+        if (serverConfig.data() && serverConfig.data().logSettings.messageDeletion) {
+            const logChannel = message.guild.channels.cache.get(serverConfig.data().logChannel)
+            await Messages.deletion.execute(message, logChannel)
+        }
+    })
 
     // Start Bot
     await client.login(process.env.TOKEN)

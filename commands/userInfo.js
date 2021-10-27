@@ -6,7 +6,7 @@ module.exports = {
         .setName('user-info')
         .setDescription('Display info about yourself.')
         .setDefaultPermission(true),
-    async execute(interaction) {
+    async execute(client, interaction) {
         return interaction.reply(`Your username: ${interaction.user.username}\nYour ID: ${interaction.user.id}`)
     },
 }

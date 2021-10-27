@@ -12,10 +12,10 @@ const deletion = {
             .setColor('#c22f25')
             .setTitle('A message has been deleted')
             .setDescription(message.content)
-            .setAuthor(`${message.author.username}#${message.author.discriminator}`)
             .setThumbnail(message.author.avatarURL())
             .addField('Original Posting Time', `<t:${utcTime}:F>`)
             .addField('Channel', `<#${message.channelId}>`)
+            .addField('Deleted by', `@${message.author.tag}`)
             .setTimestamp(new Date().toDateString())
         channel.send({
             embeds: [logMessage],

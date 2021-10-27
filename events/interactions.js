@@ -7,7 +7,7 @@ const incoming = {
         if (!command) return
 
         try {
-            await command.execute(interaction)
+            await command.execute(client, interaction)
         } catch (error) {
             await interaction.reply({ content: 'There was an error while executing this command!', ephemeral: true })
         }
