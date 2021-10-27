@@ -26,7 +26,7 @@ module.exports = {
         }
         const logMessage = new MessageEmbed()
             .setColor('#c22f25')
-            .setTitle('Messages Prunes')
+            .setTitle('Messages Pruned')
             .setDescription(`I have just pruned ${amount} messages. See below for details`)
             .addField('Channel', `<#${channel.id}>`)
             .addField('Trigger By', `@${interaction.user.tag}`)
