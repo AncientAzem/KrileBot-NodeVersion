@@ -23,10 +23,14 @@ if (options.length === 0) {
     throw new Error('Unable to register commands. Please pass in the types of commands you want to register (guild | global)')
 }
 
-if (options.includes('guild')) {
+if (options.includes('dev-mode')) {
     Commands.RegisterGuildCommands(guildCommands)
-}
-
-if (options.includes('global')) {
-    Commands.RegisterApplicationCommands(globalCommands)
+    Commands.RegisterGuildCommands(globalCommands)
+} else {
+    if (options.includes('guild')) {
+        Commands.RegisterGuildCommands(guildCommands)
+    }
+    if (options.includes('global')) {
+        Commands.RegisterApplicationCommands(globalCommands)
+    }
 }

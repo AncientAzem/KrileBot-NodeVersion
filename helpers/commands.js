@@ -12,8 +12,8 @@ async function SetPermissions(client, commandFiles, guildId) {
             const roles = serverConfig.data().moderatorCommandRoles
             guild.commands.fetch().then((result) => {
                 result.forEach((cmd) => {
-                    const { isModeration, data } = commandFiles.find((x) => x.data.name === cmd.name)
-                    if (isModeration) {
+                    const command = commandFiles.find((x) => x.data.name === cmd.name)
+                    if (command && command.isModeration) {
                         const perms = []
                         roles.forEach((roleId) => {
                             perms.push({
@@ -22,7 +22,7 @@ async function SetPermissions(client, commandFiles, guildId) {
                                 permission: true,
                             })
                         })
-                        cmd.permissions.add({ permissions: perms }).then(() => console.log(`Permissions added for "/${data.name}" in guild "${guildId}"`))
+                        cmd.permissions.add({ permissions: perms }).then(() => console.log(`Permissions added for "/${command.data.name}" in guild "${guildId}"`))
                     }
                 })
             })
