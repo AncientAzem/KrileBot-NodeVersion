@@ -20,48 +20,55 @@ module.exports = {
     async execute(client, interaction) {
         const { guildId, options } = interaction
         const amount = options.getInteger('amount')
-        let channel = options.getInteger('channel')
+        let channel = options.getChannel('channel')
         if (channel === null) {
             channel = interaction.channel
         }
-        const logMessage = new MessageEmbed()
-            .setColor('#c22f25')
-            .setTitle('Messages Pruned')
-            .setDescription(`I have just pruned ${amount} messages. See below for details`)
-            .addField('Channel', `<#${channel.id}>`)
-            .addField('Trigger By', `@${interaction.user.tag}`)
 
         if (amount <= 1 || amount > 100) {
-            console.log('amount too small')
-            return interaction.reply({ content: 'You need to input a number between 2 and 99.', ephemeral: true })
+            return interaction.reply({ content: 'You need to input a number between 2 and 99', ephemeral: true })
         }
-        console.log('checking channel')
         if (channel) {
-            if (!channel.isText()) { return interaction.reply({ content: `Unable to prune messages. ${channel.name} is not a text channel` }) }
-            interaction.reply({ content: 'Your prune request is now being processed...', ephemeral: true })
-            await channel.bulkDelete(amount)
-                .then(async () => {
-                    await interaction.followUp({
-                        content: `Successfully pruned \`${amount}\` messages.`,
-                        ephemeral: true,
-                    })
-                    const db = firebaseAdmin.firestore().collection('krilebot')
-                    const serverConfig = await db.doc(`/config/servers/${guildId}`).get()
-                    if (serverConfig.data() && serverConfig.data().logChannel) {
-                        const loggingChannel = await client.channels.cache.get(serverConfig.data().logChannel)
-                        console.log('sending log')
-                        loggingChannel.send({ embeds: [logMessage] })
+            if (!channel.isText()) { return interaction.reply({ content: `Unable to prune messages. <#${channel.id}> is not a text channel` }) }
+            await interaction.deferReply({ ephemeral: true })
+            await channel.bulkDelete(amount, true)
+                .then(async (result) => {
+                    if (result.size > 0) {
+                        let replyString = `Successfully pruned \`${result.size}\` messages in <#${channel.id}>`
+                        if (result.size < amount) {
+                            replyString += `. However, ${amount - result.size} messages were not pruned due to them being too old for the bot to clear.`
+                        }
+                        await interaction.followUp({
+                            content: replyString,
+                            ephemeral: true,
+                        })
+
+                        const db = firebaseAdmin.firestore().collection('krilebot')
+                        const serverConfig = await db.doc(`/config/servers/${guildId}`).get()
+                        if (serverConfig.data() && serverConfig.data().logChannel) {
+                            const loggingChannel = await client.channels.cache.get(serverConfig.data().logChannel)
+                            const logMessage = new MessageEmbed()
+                                .setColor('#c22f25')
+                                .setTitle('Messages Pruned')
+                                .setDescription(`I have just pruned ${result.size} messages. See below for details`)
+                                .addField('Channel', `<#${channel.id}>`)
+                                .addField('Trigger By', `@${interaction.user.tag}`)
+                            loggingChannel.send({ embeds: [logMessage] })
+                        }
+                    } else {
+                        await interaction.followUp({
+                            content: `Unable to prune messages in <#${channel.id}>. To prune messages, the messages in question must not be older than 14 days.`,
+                            ephemeral: true,
+                        })
                     }
                 })
-                .catch((error) => {
-                    console.error(error)
-                    interaction.editReply({ content: `There was an error trying to prune messages in ${channel.name}`, ephemeral: true })
+                .catch(() => {
+                    interaction.followUp({ content: `There was an error trying to prune messages in <#${channel.id}>`, ephemeral: true })
                 })
         } else {
             interaction.channel.bulkDelete(amount, true)
-                .catch((error) => {
-                    console.error(error)
-                    interaction.editReply({ content: 'There was an error trying to prune messages in this channel', ephemeral: true })
+                .catch(() => {
+                    interaction.reply({ content: 'There was an error trying to prune messages in this channel', ephemeral: true })
                 })
         }
     },
