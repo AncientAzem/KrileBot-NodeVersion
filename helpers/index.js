@@ -5,19 +5,19 @@ const {
 const { Setup, Get } = require('./S3')
 const { StartActivity } = require('./general')
 
-const Activities = {
-    'Youtube Together': '755600276941176913',
-    'Youtube Together (Dev Build)': '880218832743055411',
-    'Poker Night': '755827207812677713',
-    'Chess in the Park': '832012774040141894',
-    Betrayal: '773336526917861400',
-}
-
 const Commands = {
     SetPermissions,
     RegisterGuildCommands,
     RegisterApplicationCommands,
     GetRegisteredCommands,
+}
+
+const Activities = {
+    'Youtube Together': 'youtube',
+    'Poker Night': 'poker',
+    'Chess in the Park': 'chess',
+    'Doodle Crew': 'doodlecrew',
+    'Letter Tile': 'lettertile',
 }
 
 const FileStorage = {
@@ -27,7 +27,7 @@ const FileStorage = {
 
 module.exports = {
     Commands,
-    FileStorage,
     Activities,
+    FileStorage,
     StartActivity,
 }

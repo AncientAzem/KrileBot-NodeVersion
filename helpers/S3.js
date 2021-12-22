@@ -5,8 +5,10 @@ const aws = require('aws-sdk')
  * @constructor
  */
 function Setup() {
+    console.log(process.env.SPACES_KEY)
+    console.log(process.env.SPACES_SECRET)
     return new aws.S3({
-        endpoint: new aws.Endpoint('sfo3.digitaloceanspaces.com'),
+        endpoint: new aws.Endpoint('https://sfo3.digitaloceanspaces.com'),
         accessKeyId: process.env.SPACES_KEY,
         secretAccessKey: process.env.SPACES_SECRET,
     })
@@ -24,6 +26,7 @@ async function Get(fileName, connection = Setup()) {
         const file = await connection.getObject({ Bucket: 'isle-of-val', Key: fileName }).promise()
         return file.Body
     } catch (e) {
+        console.log(e)
         return null
     }
 }

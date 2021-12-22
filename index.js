@@ -3,6 +3,7 @@ const dotenv = require('dotenv')
 const firebaseAdmin = require('firebase-admin')
 
 const { Client, Collection, Intents } = require('discord.js')
+const { DiscordTogether } = require('discord-together')
 const { Interactions, Messages } = require('./events')
 const { Commands, FileStorage } = require('./helpers')
 
@@ -31,6 +32,7 @@ async function startApp() {
     })
 
     // Setup Commands
+    client.activities = new DiscordTogether(client)
     client.commands = new Collection()
     const commandFiles = fs.readdirSync('./commands').filter((file) => file.endsWith('.js'))
     const approvedServers = botConfig.get('approvedServers')
